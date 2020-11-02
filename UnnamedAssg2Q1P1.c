@@ -66,7 +66,8 @@ int main(void){
             close(fd1[1]);
             printf("Leaving P2\n");
         }else{
-            sleep(2);
+            // sleep(2);
+            wait(NULL);
             //P3
             printf("Entered P3\n");
             float arr[5];
@@ -103,7 +104,8 @@ int main(void){
             printf("Exiting P3\n");
         }
     }else{
-        sleep(4);
+        // sleep(4);
+        wait(NULL);
         printf("Entering back to P1\n");
         // printf("P1\n");
         //P1 again
