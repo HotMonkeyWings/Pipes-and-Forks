@@ -11,48 +11,19 @@
 
 
 int main(void){
-    // int fd0[2];
-    // int fd1[2];
-    // int fd2[2];
-    // int fd3[2];
-    //fd[0] - read
-    //fd[1] - write 
+    
+    //Making the nodes
     umask(0);
     mknod("P1_stuff", S_IFIFO|0666, 0);
     umask(0);
     mknod("P2_stuff", S_IFIFO|0666, 0);
     umask(0);
     mknod("P3_stuff", S_IFIFO|0666, 0);
+    umask(0);
+    mknod("TEMP_stuff", S_IFIFO|0666, 0);
 
 
-    // if (pipe(fd0) == -1){
-    //     printf("Cannot read from pipe, error occured.\n");
-    //     return 1;
-    // }
-    // pipe(fd1);
-    // pipe(fd2);
-    // pipe(fd3);
-    
-    // int fd1 = open("P1_stuff", O_RDWR | O_CREAT | O_TRUNC, 0777);
-    // int fd2 = open("P1_stuff", O_RDWR | O_CREAT | O_TRUNC, 0777);
-    // int fd3 = open("P13_stuff", O_RDWR | O_CREAT | O_TRUNC, 0777);
-    
-    
-
-    // write(fd0, arr, sizeof(float)*5);
-    // write(fd3, arr, sizeof(float)*5);
-    // close(fd3);
-    
-    // float arr2[5];
-    // int trial = open("P1_stuff", O_RDONLY, 0);
-    // for(i = 0; i < 5; i++){
-    //     read(fd0, &arr2[i], sizeof(float));
-                
-    //     printf("%f\n",arr2[i]);
-    // }
-
-
-
+    //Fork time
     int pid = fork();
     
     
@@ -61,21 +32,21 @@ int main(void){
         int pid1 = fork();
         if(pid1 == 0){
             //P2
-            // printf("Entered P2\n");
             int i;
             float arr[5];
             float avg = 0;
-            // printf("Test1");
             int fd0 = open("P1_stuff", O_RDONLY, 0);
-            // printf("%d",fd0);
             for(i = 0; i < 5; i++){
                 read(fd0, &arr[i], sizeof(float));
-                
-                // printf("%f\n",arr[i]);
-                avg += arr[i];
+
             }   
             close(fd0);
             
+            for(i = 0; i < 5; i++){
+                printf("%f\n", arr[i]);
+                avg += arr[i];
+            }
+
             avg /= 5;
             float x_u = 0;
             for(i = 0; i < 5; i++){
@@ -90,20 +61,18 @@ int main(void){
             close(fd1);
             // printf("Leaving P2\n");
         }else{
-            // sleep(2);
-            // wait(NULL);
             //P3
             // printf("Entered P3\n");
             float arr[5];
             int cat[5];
             int i;
-            int fd0 = open("P1_stuff", O_RDONLY);
+            int fd4 = open("TEMP_stuff", O_RDONLY);
         
             for(i = 0; i < 5; i++){
-                read(fd0, &arr[i], sizeof(float));
+                read(fd4, &arr[i], sizeof(float));
                 // printf("%f\n",arr[i]);
             }   
-            close(fd0);
+            close(fd4);
             float avg, sd;
             int fd1 = open("P2_stuff", O_RDONLY);
             read(fd1,&avg,sizeof(float));
@@ -135,7 +104,8 @@ int main(void){
             // printf("Exiting P3\n");
         }
     }else{
-        int fd0 = open("P1_stuff", O_RDWR, 0);
+        int fd0 = open("P1_stuff", O_WRONLY, 0);
+        int fd4 = open("TEMP_stuff", O_WRONLY, 0);
         //P1
         int i;
         float arr[5];
@@ -148,11 +118,11 @@ int main(void){
             }
             else{
                 write(fd0, &arr[i],sizeof(float));
+                write(fd4, &arr[i],sizeof(float));
             }
         }
         close(fd0);
-        // sleep(4);
-        // wait(NULL);
+        close(fd4);
         // printf("Entering back to P1\n");
         // printf("P1\n");
         //P1 again
@@ -179,10 +149,6 @@ int main(void){
             }
             printf("New L%d:%f\n",i+1,arr[i]);
         }
-        // close(fd3[0]);
-        // close(fd1[0]);
-        // close(fd2[0]);
-        // close(fd0[0]);
         close(fd2);
 
     }
