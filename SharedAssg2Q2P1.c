@@ -31,7 +31,7 @@ int main(void)
     int shmid = shmget(key, sizeof(pass), 0666 | IPC_CREAT);
     pass *data = (pass *)shmat(shmid, (void *)0, 0);
 
-    //Unlike semophores just incase
+    //Unlinked semophores just incase
     sem_unlink(P1_SEM);
     sem_unlink(P2_SEM);
     sem_unlink(P3_SEM);
