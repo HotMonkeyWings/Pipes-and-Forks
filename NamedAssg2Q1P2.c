@@ -43,7 +43,7 @@ int main(void){
             close(fd0);
             
             for(i = 0; i < 5; i++){
-                printf("%f\n", arr[i]);
+                // printf("%f\n", arr[i]);
                 avg += arr[i];
             }
 
